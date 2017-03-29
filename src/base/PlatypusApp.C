@@ -1,0 +1,50 @@
+#include "PlatypusApp.h"
+#include "Moose.h"
+#include "AppFactory.h"
+#include "ModulesApp.h"
+#include "MooseSyntax.h"
+
+template<>
+InputParameters validParams<PlatypusApp>()
+{
+  InputParameters params = validParams<MooseApp>();
+  return params;
+}
+
+PlatypusApp::PlatypusApp(InputParameters parameters) :
+    MooseApp(parameters)
+{
+  Moose::registerObjects(_factory);
+  ModulesApp::registerObjects(_factory);
+  PlatypusApp::registerObjects(_factory);
+
+  Moose::associateSyntax(_syntax, _action_factory);
+  ModulesApp::associateSyntax(_syntax, _action_factory);
+  PlatypusApp::associateSyntax(_syntax, _action_factory);
+}
+
+PlatypusApp::~PlatypusApp()
+{
+}
+
+// External entry point for dynamic application loading
+extern "C" void PlatypusApp__registerApps() { PlatypusApp::registerApps(); }
+void
+PlatypusApp::registerApps()
+{
+  registerApp(PlatypusApp);
+}
+
+// External entry point for dynamic object registration
+extern "C" void PlatypusApp__registerObjects(Factory & factory) { PlatypusApp::registerObjects(factory); }
+void
+PlatypusApp::registerObjects(Factory & factory)
+{
+}
+
+// External entry point for dynamic syntax association
+extern "C" void PlatypusApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory) { PlatypusApp::associateSyntax(syntax, action_factory); }
+void
+PlatypusApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+{
+}
